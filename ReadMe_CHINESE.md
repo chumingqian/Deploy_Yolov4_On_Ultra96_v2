@@ -6,4 +6,9 @@ Part3: 在边缘端(ultra_96_v2),  使用pynq-dpu1.2 分别测试剪枝前后yol
 
 
 实验结果从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量 这三个方面来对比剪枝前后的网络的性能。 实验结果如图1所示。
-![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png)
+
+
+
+
+
+#### ![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png)
