@@ -3,8 +3,8 @@
 
 
 ###     
-###  如果在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝，可以参考 https://github.com/chumingqian/Model_Compression_For_YOLOV4 。
-###  注意到如果要将剪枝的网络到ultra_96v2上，需要先对yolov4.cfg 进行如下修改，之后将修改后的网进行剪枝。  
+###  如果在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝，可以参考 https://github.com/chumingqian/Model_Compression_For_YOLOV4 。注意到如果要将剪枝的网络到ultra_96v2上，需要先对yolov4.cfg 进行如下修改，之后将修改后的网进行剪枝。 
+   
 
 ###  Part1:  修改 yolov4.cfg 网络文件。
             修改yolov4网络的结构, 使其yolov4.cfg 网络中的函数能够使用配合使用Xilinx的 vitis-ai 工具进行量化和编译， 并在pynq-dpu 运行。
