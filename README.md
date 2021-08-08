@@ -102,8 +102,8 @@ Part3: 在边缘端(ultra_96_v2),  使用pynq-dpu1.2 分别测试剪枝前后yol
 
 
 
-demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/ ，展示了当image input size 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
-----
+Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/ ，展示了当image input size 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
+==== 
  
       1  对比剪枝前后网络模型的体积大小.     
       2  在ultra96_v2, pynq-dpu1.2,的环境下载入生成的.elf 文件，运行对应的.ipynb文件.
