@@ -25,7 +25,8 @@
 
 Part1:  调整yolov4.cfg 网络.
 ------------ 
-      	 1.0 由于当前pynq-dpu1.2 暂未支持MISH激活函数，且dpu 支持的最大池化的kernel size为8, 故修改yolov4网络的结构, 使修改后的yolov4.cfg 网络能够使用配合使用Xilinx的 vitis-ai 工具进行量化和编译，并在pynq-dpu 上运行.本仓库中对原始网络的 yolov4.cfg 文件做了如下修改.
+   
+   1.0 由于当前pynq-dpu1.2 暂未支持MISH激活函数，且dpu 支持的最大池化的kernel size为8, 故修改yolov4网络的结构, 使修改后的yolov4.cfg 网络能够使用配合使用Xilinx的 vitis-ai 工具进行量化和编译，并在pynq-dpu 上运行.本仓库中对原始网络的 yolov4.cfg 文件做了如下修改.
                m1  将MISH激活函数替换成leaky.     
                m2  将SPP Moudle maxpool 由5 ，9，13 替换成 5，5，7; 之后对修改后的网络进行重新微调训练。
          
@@ -34,13 +35,12 @@ Part1:  调整yolov4.cfg 网络.
 Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成对网络的量化和编译。
 ------------
 
-         2.0 在Ubuntu18.04 上安装docker， https://docs.docker.com/engine/install/ubuntu/ ，并确认本机的linux user 加入到docker组中，  https://docs.docker.com/engine/install/linux-postinstall/ 。
-         2.1 从GitHub上拉取vitis ai的仓库文件：
+   2.0 在Ubuntu18.04 上安装docker， https://docs.docker.com/engine/install/ubuntu/ ，并确认本机的linux user 加入到docker组中，  https://docs.docker.com/engine/install/linux-postinstall/ 。
+   2.1 从GitHub上拉取vitis ai的仓库文件：
 	          git clone --recurse-submodules https://github.com/Xilinx/Vitis-AI  
                   cd Vitis-AI
 
-	         	 
-	 2.2 从 docker上拉取预编译好的vitis ai 的安装环境，若在本地安装请准备好32G 以上的内存用于安装时的编译。
+   2.2 从 docker上拉取预编译好的vitis ai 的安装环境，若在本地安装请准备好32G 以上的内存用于安装时的编译。
 	          ./docker pull xilinx/vitis-ai-cpu:latest  
              启动docker 环境中的vitis ai ：	    
 	          ./docker_run.sh xilinx/vitis-ai-cpu:latest
@@ -53,32 +53,32 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 				 Vitis AI v1.2	./docker_run.sh xilinx/vitis-ai-cpu:1.2.82
              
          
-         2.3 在启动vitis ai后， 可以看到vitis ai 当前支持的深度学习框架有Pytorch、Tensorflow、Tensorflow 2 和 Caffe， 由于笔者实现的是Darknet 版本的yolov4, 网络文件为.cfg格式， 故先要对网络文件，以及权重文件的格式进行转换， 此处介绍两种转换方式由darknet 分别转换成Tensorflow 和 caffe, 之后对caffe 和 Tensorflow 模型进行量化和编译。 对网络模型的量化和编译，具体可参考 vitis ai 中的技术文档(https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html)，其中有中文版c_ug1414-vitis-ai.pdf.     
+   2.3 在启动vitis ai后， 可以看到vitis ai 当前支持的深度学习框架有Pytorch、Tensorflow、Tensorflow 2 和 Caffe， 由于笔者实现的是Darknet 版本的yolov4, 网络文件为.cfg格式， 故先要对网络文件，以及权重文件的格式进行转换， 此处介绍两种转换方式由darknet 分别转换成Tensorflow 和 caffe, 之后对caffe 和 Tensorflow 模型进行量化和编译。 对网络模型的量化和编译，具体可参考 vitis ai 中的技术文档(https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html)，其中有中文版c_ug1414-vitis-ai.pdf.     
         		
 
-	 2.4 Darknet Convert to Tensorflow(conda activate Tensorflow) 
+   2.4 Darknet Convert to Tensorflow(conda activate Tensorflow) 
+		
 		STEP1: 网络模型，权重格式转换：		
 		python ../keras-YOLOv3-model-set/tools/model_converter/convert.py --yolo4_reorder ../dk_model/yolov4-voc-leaky.cfg ../dk_model/leakcy-v4.weights ../keras_model/v4_voc_leaky.h5
 		python ../keras-YOLOv3-model-set/tools/model_converter/keras_to_tensorflow.py --input_model ../keras_model/v4_voc_leaky.h5 --output_model=../tf_model/v4_tf_model.pb
 	
-		输入节点和输出节点名称因模型而异，可使用 vai_q_tensorflow 量化器来检查和估算这些节点。请参阅以下代码片段示例：
+	        输入节点和输出节点名称因模型而异，可使用 vai_q_tensorflow 量化器来检查和估算这些节点。请参阅以下代码片段示例：
 		$ vai_q_tensorflow inspect --input_frozen_graph=../tf_model/v4_tf_model.pb
 
 		种获取图的输入和输出名称的方法是将图可视化。 TensorBoard 和 Netron 均可执行此操作。请参阅以下示例， 其中使用的是 Netron：
 		$ pip install netron
 		$  netron ../tf_model/v4_tf_model.pb
 
-
 		STEP2:量化步骤：
 		vai_q_tensorflow quantize --input_frozen_graph ../tf_model/v4_tf_model.pb --input_fn yolov4_graph_input_keras_fn.calib_input   --output_dir ../chu_v4_quantized --input_nodes image_input --output_nodes conv2d_93/BiasAdd,conv2d_101/BiasAdd,conv2d_109/BiasAdd --input_shapes ?,416,416,3 --calib_iter 30
-
 
 		STEP3:COMPLIE 编译步骤		
 		pynq-dpu1.2 使用以下这个，编译生成的.elf 文件用于 Pynq-dpu1.2 版本：	
 		dnnc-dpuv2 --save_kernel --parser tensorflow --frozen_pb ../chu_v4_quantized/deploy_model.pb --dcf dpuPynq_ultra96v2.dcf  --cpu_arch arm64 --output_dir ../chu_v4_compiled --net_name tf_model_v4_416
 
 				
-	 2.5 darnet  convert to caffe ( conda activate caffe )	    
+   2.5 darnet  convert to caffe ( conda activate caffe )	    
+		
 		STEP1: MODEL CONVERT  TO CAFFE
 		python /opt/vitis_ai/conda/envs/vitis-ai-caffe/bin/convert.py ../dk_model/yolov4-voc-leaky.cfg ../dk_model/leakcy-v4.weights  ../dpu1.3.2_caffe_model/v4_leacky.prototxt ../dpu1.3.2_caffe_model/v4_leacky.caffemodel
 
@@ -99,7 +99,7 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 Part3: 在边缘端(ultra_96_v2),  使用pynq-dpu1.2 分别测试剪枝前后yolov4网络的推理速度， 使用pynq-dpu1.3 分别测试剪枝前后yolov4网络消耗的能量。
 ------------
        3.1  在SD(32G)卡上烧写PYNQ2.6的镜像， 镜像文件（https://github.com/Xilinx/PYNQ/releases or http://www.pynq.io/board.html) 
-
+       3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入
 
 
 Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/ ，展示了当image input size 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
@@ -120,5 +120,5 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/ ，展示了当im
 
 
 
-致谢:                           感谢 XILINX & NICU 举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
+致谢:             感谢 XILINX & NICU 举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
 ======  
