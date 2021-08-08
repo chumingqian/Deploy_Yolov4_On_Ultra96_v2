@@ -39,12 +39,14 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
    2.0 在Ubuntu18.04 上安装docker， https://docs.docker.com/engine/install/ubuntu/ ，并确认本机的linux user 加入到docker组中，  https://docs.docker.com/engine/install/linux-postinstall/   or reference the  https://www.xilinx.com/html_docs/vitis_ai/1_3/installation.html install the  vitis ai。
    
    2.1 从GitHub上拉取vitis ai的仓库文件：
+   
 	          git clone --recurse-submodules https://github.com/Xilinx/Vitis-AI  
                   cd Vitis-AI
 
    2.2 从 docker上拉取预编译好的vitis ai 的安装环境,(若在本地安装请准备好32G 以上的内存用于安装时的编译)。
    
 	          ./docker pull xilinx/vitis-ai-cpu:latest  
+		  
              启动docker 环境中的vitis ai ：	    
 	          ./docker_run.sh xilinx/vitis-ai-cpu:latest
 		  
@@ -59,7 +61,7 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
    2.3 在启动vitis ai后， 可以看到vitis ai 当前支持的深度学习框架有Pytorch、Tensorflow、Tensorflow 2 和 Caffe， 由于笔者实现的是Darknet 版本的yolov4, 网络文件为.cfg格式， 故先要对网络文件，以及权重文件的格式进行转换， 此处介绍两种转换方式由darknet 分别转换成Tensorflow 和 caffe, 之后对caffe 和 Tensorflow 模型进行量化和编译。 对网络模型的量化和编译，具体可参考 vitis ai 中的技术文档(https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html)，其中有中文版c_ug1414-vitis-ai.pdf.     
         		
 
-   2.4 Darknet Convert to Tensorflow(conda activate Tensorflow) 
+   2.4 Darknet Convert to Tensorflow(conda activate Tensorflow) (for pynq-dpu1.2 ,generate the dpu_model.elf )
 		
 		STEP1: 网络模型，权重格式转换：		
 		python ../keras-YOLOv3-model-set/tools/model_converter/convert.py --yolo4_reorder ../dk_model/yolov4-voc-leaky.cfg ../dk_model/leakcy-v4.weights ../keras_model/v4_voc_leaky.h5
@@ -80,7 +82,7 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 		dnnc-dpuv2 --save_kernel --parser tensorflow --frozen_pb ../chu_v4_quantized/deploy_model.pb --dcf dpuPynq_ultra96v2.dcf  --cpu_arch arm64 --output_dir ../chu_v4_compiled --net_name tf_model_v4_416
 
 				
-   2.5 darnet  convert to caffe ( conda activate caffe )	    
+   2.5 darnet  convert to caffe ( conda activate caffe ) (for pynq-dpu1.3, generate the dpu_model.xmodel )	    
 		
 		STEP1: MODEL CONVERT  TO CAFFE
 		python /opt/vitis_ai/conda/envs/vitis-ai-caffe/bin/convert.py ../dk_model/yolov4-voc-leaky.cfg ../dk_model/leakcy-v4.weights  ../dpu1.3.2_caffe_model/v4_leacky.prototxt ../dpu1.3.2_caffe_model/v4_leacky.caffemodel
@@ -99,23 +101,24 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 
 
 
-Part3: 在边缘端(ultra_96_v2),  使用pynq-dpu1.2 分别测试剪枝前后yolov4网络的推理速度， 使用pynq-dpu1.3 分别测试剪枝前后yolov4网络消耗的能量。
+Part3: 在边缘端(ultra_96_v2), 使用pynq-dpu1.2 分别测试剪枝前后yolov4网络的推理速度，使用pynq-dpu1.3 分别测试剪枝前后yolov4网络消耗的能量。
 ------------
        3.1  在SD(32G)卡上烧写PYNQ2.6的镜像， 镜像文件（https://github.com/Xilinx/PYNQ/releases or http://www.pynq.io/board.html) 
        3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入到板子中对应的路径下。
-       3.3 
-                      * 加载模型(vitis-ai生成的.xmodel文件)：
-			 overlay.load_model(“dpu_model.xmodel”)
-		      * 定义dpu对象
-			 dpu = overlay.runner
-		      * 创建输入和输出Buffer
-			  output_data = [np.empty(shapeOut, dtype=np.float32, order="C")]
-			  input_data = [np.empty(shapeIn, dtype=np.float32, order="C")]
-		      * 进行预测
-			  job_id = dpu.execute_async(input_data, output_data)
-			  dpu.wait(job_id)
-		      * 预测的结果存储在output_data中
-![image](https://user-images.githubusercontent.com/46816091/128623897-6071fe5f-3a30-4708-85a3-b72259c29fb1.png)
+       3.3  编写用于运行网络推理的notebook.ipynb, 以下为调用DPU 运行网络推理的主体步骤，(其中测试功耗的evaluation.ipynb 在test_energy文件中)。
+                      
+			* 加载模型(vitis-ai生成的.xmodel文件)：
+			  	overlay.load_model(“dpu_model.xmodel”  or "dup_model.elf")
+			* 定义dpu对象
+			   	dpu = overlay.runner
+			* 创建输入和输出Buffer
+				output_data = [np.empty(shapeOut, dtype=np.float32, order="C")]
+				input_data = [np.empty(shapeIn, dtype=np.float32, order="C")]
+			* 进行预测
+				job_id = dpu.execute_async(input_data, output_data)
+				dpu.wait(job_id)
+			* 预测的结果存储在output_data中
+
 
 
 
@@ -134,16 +137,17 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
     
                            
 #####    实验结果如图1所示。
- 
-![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png#pic_center)
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200822014538211.png#pic_center)
-
-<img src="./xxx.png" width = "300" height = "200" alt="https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png" align=center />
 
 <div align="center">
-<img src=(https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png) />
+<img src="./images/fig1.png" width = "700" height = "360" />
+</div>	
+
+
+致谢:  感谢 XILINX & NICU 共同举办的暑期学校，这是个值得纪念的Summer School, 我们度过了南京疫情和上海“烟花”台风，最终抵达 XILINX_2021 SUMMER SCHOOL的彼岸. 
+======  
+
+
+<div align="center">
+<img src=https://img-blog.csdnimg.cn/20200822014538211.png />
 </div>
 
-致谢:   感谢 XILINX & NICU 共同举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
-======  
