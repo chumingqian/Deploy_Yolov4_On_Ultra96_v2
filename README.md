@@ -121,8 +121,10 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
     
                            
        实验结果如图1所示。
-##### ![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png#pic_center)
+##### 
+![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png#pic_center)
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200822014538211.png#pic_center)
+
 <div align="center">
 <img src=(https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png) />
 </div>
