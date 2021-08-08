@@ -16,7 +16,7 @@
 
 ###  本仓库主要包含以下部分的内容：
 ------------
-* Part1:  修改 yolov4.cfg 网络文件. 
+* Part1:  调整 yolov4.cfg 网络文件. 
 * Part2: 使用vitis -ai 工具对网络进行量化和编译. 
 * Part3: 将网络部署到边缘端(ultra_96_v2)上,编写notebook.ipynb 文件，调用pynq-dpu 推理运行网络.  
 
@@ -24,9 +24,11 @@
 
 ###     
 ####### 在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考 https://github.com/chumingqian/Model_Compression_For_YOLOV4 . 注意到如果要对网络进行剪枝，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
-=====   
+  
 
-###  Part1:  修改 yolov4.cfg 网络文件。
+Part1:  调整yolov4.cfg 网络.
+===== 
+
             受限于当前pynq-dpu1.2 并不支持MISH激活函数，且dpu 支持的最大池化的kernel size为8, 故修改yolov4网络的结构, 使修改后的yolov4.cfg 网络能够使用配合使用Xilinx的 vitis-ai 工具进行量化和编译，并在pynq-dpu 上运行.本仓库中对原始网络的 yolov4.cfg 文件做了如下修改.
                1  将MISH激活函数替换成leaky.     
                2  将SPP Moudle maxpool 由5 ，9，13 替换成 5，5，7; 之后对修改后的网络进行重新微调训练。
@@ -36,6 +38,7 @@
 
 
 ###  Part2: 在主机端(ubuntu18.04)上使用Xilinx 的vitis -ai  工具完成对剪枝网络的量化和编译部署。
+====
          2.1 主机端安装 vitis ai 工具,  推荐使用 docker 环境安装，若在本地安装请准备32G 以上的内存用于安装时的编译。
          
          
