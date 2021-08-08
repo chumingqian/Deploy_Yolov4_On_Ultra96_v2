@@ -1,6 +1,20 @@
 
 ##  [English Version  README.MD] (https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/blob/main/README_eng.md)
 
+<div align="center">
+📖 Github
+&emsp;&emsp; | &emsp;&emsp;
+<a href="https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/blob/main/README_eng.md">📚 Docsify</a>
+</div> 
+<br>
+
+<div align="center">
+<a href="https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/">简体中文</a>
+&emsp;&emsp; | &emsp;&emsp;
+English
+</div> 
+<br>
+
 ###   本仓库主要包含以下部分的内容：
 ###     
 ###  如果在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝，可以参考 https://github.com/chumingqian/Model_Compression_For_YOLOV4 。注意到如果要将剪枝的网络到ultra_96v2上，需要先对yolov4.cfg 进行如下修改，之后将修改后的网进行剪枝。 
