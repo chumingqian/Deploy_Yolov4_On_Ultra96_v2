@@ -124,7 +124,7 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
 ######  ![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png)
 
 <div align="center">
-<img src=![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png) />
+<img src=(https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png) />
 </div>
 
 致谢:     感谢 XILINX & NICU 共同举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
