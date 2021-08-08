@@ -14,32 +14,32 @@
 <br>
 
 
+###  本仓库主要包含以下部分的内容：Part1:  修改 yolov4.cfg 网络文件.  Part2: 使用vitis -ai 工具对网络进行量化和编译.  Part3: 将网络部署到边缘端(ultra_96_v2)上,编写notebook.ipynb 文件，调用pynq-dpu 推理运行网络.  
 
 
-###   本仓库主要包含以下部分的内容：
+
 ###     
-###  如果在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝，可以参考 https://github.com/chumingqian/Model_Compression_For_YOLOV4 。注意到如果要将剪枝的网络到ultra_96v2上，需要先对yolov4.cfg 进行如下修改，之后将修改后的网进行剪枝。 
+### 在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考 https://github.com/chumingqian/Model_Compression_For_YOLOV4 . 注意到如果要对网络进行剪枝，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
    
 
 ###  Part1:  修改 yolov4.cfg 网络文件。
-            修改yolov4网络的结构, 使其yolov4.cfg 网络中的函数能够使用配合使用Xilinx的 vitis-ai 工具进行量化和编译， 并在pynq-dpu 运行。
-            受限于当前pynq-dpu1.2 并不支持MISH激活函数，且dpu 支持的最大池化的kernel size为8。 本仓库中对原始网络的 yolov4.cfg 文件做了如下修改。   
+            受限于当前pynq-dpu1.2 并不支持MISH激活函数，且dpu 支持的最大池化的kernel size为8, 故修改yolov4网络的结构, 使修改后的yolov4.cfg 网络能够使用配合使用Xilinx的 vitis-ai 工具进行量化和编译，并在pynq-dpu 上运行.本仓库中对原始网络的 yolov4.cfg 文件做了如下修改.
                1  将MISH激活函数替换成leaky.     
-               2  将SPP Moudle maxpool 由5 ，9，13 替换成 5，5，7.   之后对修改后的网络进行重新微调训练。
+               2  将SPP Moudle maxpool 由5 ，9，13 替换成 5，5，7; 之后对修改后的网络进行重新微调训练。
          
 
 
 
 
 ###  Part2: 在主机端(ubuntu18.04)上使用Xilinx 的vitis -ai  工具完成对剪枝网络的量化和编译部署。
-         2.1 主机端安装 vitis ai 工具,  推荐使用 docker 环境安装，若在本地安装请32G 以上的内存用于安装时的编译。
+         2.1 主机端安装 vitis ai 工具,  推荐使用 docker 环境安装，若在本地安装请准备32G 以上的内存用于安装时的编译。
          
          
-        2.2 在主机端完成vitis ai配置后， 可对模型进行量化和编译，具体参考 vitis ai 中的技术文档(https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html)，其中有中文版c_ug1414-vitis-ai.pdf.  vitis ai 当前支持的深度学习框架有Pytorch、Tensorflow、Tensorflow 2 和 Caffe，  由于笔者实现的是Darknet 版本的yolov4, 网络文件为.cfg格式， 故先要对网络文件，以及权重文件的格式进行转换， 此处介绍两种转换方式由darknet 分别转换成 caffe 格式        
+         2.2 在主机端完成vitis ai配置后， 可对模型进行量化和编译，具体参考 vitis ai 中的技术文档(https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html)，其中有中文版c_ug1414-vitis-ai.pdf.  vitis ai 当前支持的深度学习框架有Pytorch、Tensorflow、Tensorflow 2 和 Caffe，  由于笔者实现的是Darknet 版本的yolov4, 网络文件为.cfg格式， 故先要对网络文件，以及权重文件的格式进行转换， 此处介绍两种转换方式由darknet 分别转换成 caffe  和 Tensorflow,  之后对caffe 和 Tensorflow 模型进行量化和编译。      
         
 	
 	
-	转为caffe
+	   2.3 darnet  convert to caffe
 
 		STEP1: MODEL CONVERT  TO CAFFE
 		python /opt/vitis_ai/conda/envs/vitis-ai-caffe/bin/convert.py yolov4.cfg yolov4.weights VOC/yolov4.prototxt VOC/yolov4.caffemodel
@@ -63,23 +63,13 @@
 
 
 		STEP3:  MODEL  COMPILE 
-		vai_c_caffe --prototxt yolov4_quantized/deploy.prototxt --caffemodel yolov4_quantized/deploy.caffemodel --arch /opt/vitis_ai/compiler/arch/DPUCZDX8G/ZCU102/arch.json --output_dir yolov4_compiled/ --net_name dpu_yolov4_voc --options "{'mode':'normal','save_kernel':''}";
-
 		vai_c_caffe --prototxt ../dpu1.3.2_caffe_model/original_model_quanti/deploy.prototxt --caffemodel ../dpu1.3.2_caffe_model/original_model_quanti/deploy.caffemodel --arch ./u96pynq.json --output_dir ../dpu1.3.2_caffe_model/ --net_name dpu1.3_v4_voc --options "{'mode':'normal','save_kernel':''}";
-
 
 		vai_c_caffe --prototxt ../dpu1.3.2_caffe_model/pruned_model_quanti/deploy.prototxt  --caffemodel  ../dpu1.3.2_caffe_model/pruned_model_quanti/deploy.caffemodel --arch ./u96pynq.json --output_dir ../dpu1.3.2_caffe_model/ --net_name dpu1.3_pruned_v4_voc --options "{'mode':'normal','save_kernel':''}";
 
-
 		vai_c_caffe --prototxt ../dpu1.3.2_caffe_model/original_model_quanti/deploy.prototxt --caffemodel ../dpu1.3.2_caffe_model/original_model_quanti/deploy.caffemodel --arch ./u96pynq_v2.json --output_dir ../dpu1.3.2_caffe_model/ --net_name dpu1-3-2_v4_voc --options "{'mode':'normal','save_kernel':''}";
 
-
 		vai_c_caffe --prototxt ../dpu1.3.2_caffe_model/pruned_model_quanti/deploy.prototxt  --caffemodel  ../dpu1.3.2_caffe_model/pruned_model_quanti/deploy.caffemodel --arch ./u96pynq_v2.json --output_dir ../dpu1.3.2_caffe_model/ --net_name dpu1.3_pruned_v4_voc --options "{'mode':'normal','save_kernel':''}"
-
-
-
-
-
 
 
 
@@ -109,18 +99,7 @@
 		$ pip install netron
 		$  netron ../tf_model/v4_tf_model.pb
 
-
-
-
 		STEP2:量化步骤：
-		vai_q_tensorflow quantize --input_frozen_graph ../tf_model/tf_model.pb \
-					  --input_fn yolov4_graph_input_keras_fn.calib_input \
-					  --output_dir ../yolov4_quantized \
-				  --input_nodes image_input \
-					  --output_nodes conv2d_93/BiasAdd,conv2d_101/BiasAdd,conv2d_109/BiasAdd \
-					  --input_shapes ?,512,512,3 \
-					  --gpu 0 \
-					  --calib_iter 100 \
 
 		vai_q_tensorflow quantize --input_frozen_graph ../tf_model/v4_tf_model.pb --input_fn yolov4_graph_input_keras_fn.calib_input   --output_dir ../chu_v4_quantized --input_nodes image_input --output_nodes conv2d_93/BiasAdd,conv2d_101/BiasAdd,conv2d_109/BiasAdd --input_shapes ?,416,416,3 --calib_iter 30
 
