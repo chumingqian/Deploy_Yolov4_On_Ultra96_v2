@@ -18,11 +18,9 @@
 * Part1:  调整 yolov4.cfg 网络文件. 
 * Part2: 使用vitis -ai 工具对网络进行量化和编译. 
 * Part3: 将网络部署到边缘端(ultra_96_v2)上,编写notebook.ipynb 文件，调用pynq-dpu 推理运行网络.  
-
-
     
-        Note:在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考[本仓库所使用的剪枝方法](url="https://github.com/chumingqian/Model_Compression_For_YOLOV4") <a href="https://github.com/chumingqian/Model_Compression_For_YOLOV4">本仓库所使用的剪枝方法</a>. 注意到如果要对网络进行剪枝，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
-====
+ Note:在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考[本仓库所使用的剪枝方法](url="https://github.com/chumingqian/Model_Compression_For_YOLOV4"). 注意到如果要对网络进行剪枝，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
+
   
 
 Part1:  调整yolov4.cfg 网络.
