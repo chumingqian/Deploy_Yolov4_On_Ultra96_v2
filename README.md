@@ -27,6 +27,7 @@ Part1:  调整yolov4.cfg 网络.
 ------------ 
    
    1.0 由于当前pynq-dpu1.2 暂未支持MISH激活函数，且dpu 支持的最大池化的kernel size为8, 故修改yolov4网络的结构, 使修改后的yolov4.cfg 网络能够使用配合使用Xilinx的 vitis-ai 工具进行量化和编译，并在pynq-dpu 上运行.本仓库中对原始网络的 yolov4.cfg 文件做了如下修改.
+   
                m1  将MISH激活函数替换成leaky.     
                m2  将SPP Moudle maxpool 由5 ，9，13 替换成 5，5，7; 之后对修改后的网络进行重新微调训练。
          
@@ -92,7 +93,7 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 
 		STEP3:  MODEL  COMPILE 
 		vai_c_caffe --prototxt ../dpu1.3.2_caffe_model/original_model_quanti/deploy.prototxt --caffemodel ../dpu1.3.2_caffe_model/original_model_quanti/deploy.caffemodel --arch ./u96pynq_v2.json --output_dir ../dpu1.3.2_caffe_model/ --net_name dpu1-3-2_v4_voc --options "{'mode':'normal','save_kernel':''}";
-		 注意到在ultra_96_v2上,pynq-dpu1.3 中，使用编译生成好的.xmodel 文件运行网络推理时， 如果出现 footprint  not match 的现象，可将u96pynq_v2.json 文件替换成 u96pynq.json， 具体可参考：https://forums.xilinx.com/t5/AI-and-Vitis-AI/vitis-ai-1-3-with-ultra96/td-p/1189251 。
+		 注意到在ultra_96_v2上,pynq-dpu1.3 中，使用编译生成好的.xmodel 文件运行网络推理时， 如果出现 footprint  not match 的现象，可将u96pynq_v2.json 文件替换成 u96pynq.json，具体可参考：https://forums.xilinx.com/t5/AI-and-Vitis-AI/vitis-ai-1-3-with-ultra96/td-p/1189251 。
 
 
 
@@ -104,8 +105,10 @@ Part3: 在边缘端(ultra_96_v2),  使用pynq-dpu1.2 分别测试剪枝前后yol
        3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入到板子中对应的路径下。
 
 
-Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/ ，展示了当image input size 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
+Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
 ------------
+ 展示了当 image input size: 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
+
  
       1  对比剪枝前后网络模型的体积大小.     
       2  在ultra96_v2, pynq-dpu1.2,的环境下载入生成的.elf 文件，运行对应的.ipynb文件.
@@ -117,10 +120,12 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/ ，展示了当im
          3.2 测试未剪枝网络模型推理500 images，所消耗的功耗，约为2347J .
     
                            
-          实验结果如图1所示。
+       实验结果如图1所示。
 ######  ![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png)
 
+<div align="center">
+<img src=![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png) />
+</div>
 
-
-致谢:             感谢 XILINX & NICU 共同举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
+致谢:     感谢 XILINX & NICU 共同举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
 ======  
