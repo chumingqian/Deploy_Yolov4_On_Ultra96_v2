@@ -1,0 +1,8 @@
+{
+    "lib": "libvart-dpu-runner.so",
+    "filename": "dpu1.3_pruned_v4_voc.xmodel",
+    "kernel": [
+        "subgraph_layer0-conv"
+    ],
+    "target": "DPUCZDX8G_ISA0_B1600_MAX"
+}

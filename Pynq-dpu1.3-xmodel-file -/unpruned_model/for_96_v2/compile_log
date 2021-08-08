@@ -1,0 +1,24 @@
+(vitis-ai-caffe) Vitis-AI /workspace/Vitis-Tutorials/Machine_Learning/Design_Tutorials/07-yolov4-tutorial/scripts > vai_c_caffe --prototxt ../dpu1.3.2_caffe_model/original_model_quanti/deploy.prototxt --caffemodel ../dpu1.3.2_caffe_model/original_model_quanti/deploy.caffemodel --arch ./u96pynq_v2.json --output_dir ../dpu1.3.2_caffe_model/ --net_name dpu1-3-2_v4_voc --options "{'mode':'normal','save_kernel':''}"
+**************************************************
+* VITIS_AI Compilation - Xilinx Inc.
+**************************************************
+[INFO] Namespace(inputs_shape=None, layout='NCHW', model_files=['../dpu1.3.2_caffe_model/original_model_quanti/deploy.caffemodel'], model_type='caffe', out_filename='../dpu1.3.2_caffe_model//dpu1-3-2_v4_voc_org.xmodel', proto='../dpu1.3.2_caffe_model/original_model_quanti/deploy.prototxt')
+[INFO] caffe model: ../dpu1.3.2_caffe_model/original_model_quanti/deploy.caffemodel
+[INFO] caffe model: ../dpu1.3.2_caffe_model/original_model_quanti/deploy.prototxt
+[INFO] parse raw model     :100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 386/386 [00:17<00:00, 22.14it/s]                
+[INFO] infer shape (NCHW)  :100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 386/386 [00:00<00:00, 5499.21it/s]              
+[INFO] infer shape (NHWC)  :100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 386/386 [00:00<00:00, 4664.33it/s]              
+[INFO] generate xmodel     :100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 386/386 [00:00<00:00, 582.16it/s]               
+[INFO] generate xmodel: /workspace/Vitis-Tutorials/Machine_Learning/Design_Tutorials/07-yolov4-tutorial/scripts/../dpu1.3.2_caffe_model/dpu1-3-2_v4_voc_org.xmodel
+[UNILOG][INFO] The compiler log will be dumped at "/tmp/vitis-ai-user/log/xcompiler-20210801-222725-437"
+[UNILOG][INFO] Compile mode: dpu
+[UNILOG][INFO] Debug mode: function
+[UNILOG][INFO] Target architecture: DPUCZDX8G_ISA0_B1600_MAX
+[UNILOG][INFO] Graph name: deploy, with op num: 826
+[UNILOG][INFO] Begin to compile...
+[UNILOG][INFO] Total device subgraph number 5, DPU subgraph number 1
+[UNILOG][INFO] Compile done.
+[UNILOG][INFO] The meta json is saved to "/workspace/Vitis-Tutorials/Machine_Learning/Design_Tutorials/07-yolov4-tutorial/scripts/../dpu1.3.2_caffe_model/meta.json"
+[UNILOG][INFO] The compiled xmodel is saved to "/workspace/Vitis-Tutorials/Machine_Learning/Design_Tutorials/07-yolov4-tutorial/scripts/../dpu1.3.2_caffe_model//dpu1-3-2_v4_voc.xmodel"
+[UNILOG][INFO] The compiled xmodel's md5sum is 68505c8d47221304f8427f1795fecbd2, and been saved to "/workspace/Vitis-Tutorials/Machine_Learning/Design_Tutorials/07-yolov4-tutorial/scripts/../dpu1.3.2_caffe_model/md5sum.txt"
+

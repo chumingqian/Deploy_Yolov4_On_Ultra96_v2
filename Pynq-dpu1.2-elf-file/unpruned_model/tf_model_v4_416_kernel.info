@@ -1,0 +1,35 @@
+
+Kernel topology "tf_model_v4_416_kernel_graph.jpg" for network "tf_model_v4_416"
+kernel list info for network "tf_model_v4_416"
+                               Kernel ID : Name
+                                       0 : tf_model_v4_416
+
+                             Kernel Name : tf_model_v4_416
+--------------------------------------------------------------------------------
+                             Kernel Type : DPUKernel
+                               Code Size : 1.93MB
+                              Param Size : 61.04MB
+                           Workload MACs : 59668.67MOPS
+                         IO Memory Space : 13.70MB
+                              Mean Value : 0, 0, 0, 
+                      Total Tensor Count : 126
+                Boundary Input Tensor(s)   (H*W*C)
+                        image_input:0(0) : 416*416*3
+
+               Boundary Output Tensor(s)   (H*W*C)
+                   conv2d_93_Conv2D:0(0) : 52*52*75
+                  conv2d_101_Conv2D:0(1) : 26*26*75
+                  conv2d_109_Conv2D:0(2) : 13*13*75
+
+                        Total Node Count : 124
+                           Input Node(s)   (H*W*C)
+                        conv2d_Conv2D(0) : 416*416*3
+
+                          Output Node(s)   (H*W*C)
+                     conv2d_93_Conv2D(0) : 52*52*75
+                    conv2d_101_Conv2D(0) : 26*26*75
+                    conv2d_109_Conv2D(0) : 13*13*75
+
+
+
+
