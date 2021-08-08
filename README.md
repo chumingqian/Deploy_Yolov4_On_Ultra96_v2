@@ -21,7 +21,7 @@
 
 
     
-        Note:在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考[本仓库所使用的剪枝方法](url="https://github.com/chumingqian/Model_Compression_For_YOLOV4") . 注意到如果要对网络进行剪枝，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
+        Note:在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考[本仓库所使用的剪枝方法](url="https://github.com/chumingqian/Model_Compression_For_YOLOV4") <a href="https://github.com/chumingqian/Model_Compression_For_YOLOV4">本仓库所使用的剪枝方法</a>. 注意到如果要对网络进行剪枝，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
 ====
   
 
