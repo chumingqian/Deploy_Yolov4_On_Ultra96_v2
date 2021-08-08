@@ -103,12 +103,25 @@ Part3: 在边缘端(ultra_96_v2),  使用pynq-dpu1.2 分别测试剪枝前后yol
 ------------
        3.1  在SD(32G)卡上烧写PYNQ2.6的镜像， 镜像文件（https://github.com/Xilinx/PYNQ/releases or http://www.pynq.io/board.html) 
        3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入到板子中对应的路径下。
+       3.3 
+                      * 加载模型(vitis-ai生成的.xmodel文件)：
+			 overlay.load_model(“dpu_model.xmodel”)
+		      * 定义dpu对象
+			 dpu = overlay.runner
+		      * 创建输入和输出Buffer
+			  output_data = [np.empty(shapeOut, dtype=np.float32, order="C")]
+			  input_data = [np.empty(shapeIn, dtype=np.float32, order="C")]
+		      * 进行预测
+			  job_id = dpu.execute_async(input_data, output_data)
+			  dpu.wait(job_id)
+		      * 预测的结果存储在output_data中
+![image](https://user-images.githubusercontent.com/46816091/128623897-6071fe5f-3a30-4708-85a3-b72259c29fb1.png)
+
 
 
 Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
 ------------
- 展示了当 image input size: 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
-
+展示了当 image input size: 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
  
       1  对比剪枝前后网络模型的体积大小.     
       2  在ultra96_v2, pynq-dpu1.2,的环境下载入生成的.elf 文件，运行对应的.ipynb文件.
@@ -120,14 +133,17 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
          3.2 测试未剪枝网络模型推理500 images，所消耗的功耗，约为2347J .
     
                            
-       实验结果如图1所示。
-##### 
+#####    实验结果如图1所示。
+ 
 ![fig1](https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png#pic_center)
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200822014538211.png#pic_center)
+
+<img src="./xxx.png" width = "300" height = "200" alt="https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png" align=center />
 
 <div align="center">
 <img src=(https://user-images.githubusercontent.com/46816091/128596310-88837fbf-3fec-47f4-a19e-ae7da825b611.png) />
 </div>
 
-致谢:     感谢 XILINX & NICU 共同举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
+致谢:   感谢 XILINX & NICU 共同举办的暑期学校， 这是个值得纪念的Summer School, 我们共同经历了南京疫情和上海“烟花”台风，最终完成了 XILINX_2021 SUMMER SCHOOL. 
 ======  
