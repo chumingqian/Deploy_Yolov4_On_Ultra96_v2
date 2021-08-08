@@ -14,7 +14,10 @@
 <br>
 
 
-###  本仓库主要包含以下部分的内容：Part1:  修改 yolov4.cfg 网络文件.  Part2: 使用vitis -ai 工具对网络进行量化和编译.  Part3: 将网络部署到边缘端(ultra_96_v2)上,编写notebook.ipynb 文件，调用pynq-dpu 推理运行网络.  
+###  本仓库主要包含以下部分的内容：
+* Part1:  修改 yolov4.cfg 网络文件. 
+* Part2: 使用vitis -ai 工具对网络进行量化和编译. 
+* Part3: 将网络部署到边缘端(ultra_96_v2)上,编写notebook.ipynb 文件，调用pynq-dpu 推理运行网络.  
 
 
 
