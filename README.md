@@ -35,13 +35,14 @@ Part1:  调整yolov4.cfg 网络.
 Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成对网络的量化和编译。
 ------------
 
-   2.0 在Ubuntu18.04 上安装docker， https://docs.docker.com/engine/install/ubuntu/ ，并确认本机的linux user 加入到docker组中，  https://docs.docker.com/engine/install/linux-postinstall/ 。
+   2.0 在Ubuntu18.04 上安装docker， https://docs.docker.com/engine/install/ubuntu/ ，并确认本机的linux user 加入到docker组中，  https://docs.docker.com/engine/install/linux-postinstall/   or reference the  https://www.xilinx.com/html_docs/vitis_ai/1_3/installation.html install the  vitis ai。
    
    2.1 从GitHub上拉取vitis ai的仓库文件：
 	          git clone --recurse-submodules https://github.com/Xilinx/Vitis-AI  
                   cd Vitis-AI
 
-   2.2 从 docker上拉取预编译好的vitis ai 的安装环境，若在本地安装请准备好32G 以上的内存用于安装时的编译。
+   2.2 从 docker上拉取预编译好的vitis ai 的安装环境,(若在本地安装请准备好32G 以上的内存用于安装时的编译)。
+   
 	          ./docker pull xilinx/vitis-ai-cpu:latest  
              启动docker 环境中的vitis ai ：	    
 	          ./docker_run.sh xilinx/vitis-ai-cpu:latest
@@ -85,7 +86,7 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 
 		STEP2:  MDOEL  QUANTI
 		*1.在量化之前，对原始的.prototxt网络拷贝一个副本，在副本中加入校准图片的路径， 使用该副本网络进行量化；
-		*2.并且注意到校准图片的.txt 文档中，实现量化时需要含两列的列表文件，这与tensorflow 的校准文件的txt文档不一样。(对于量化校准，不含标签的校准数据即可足够。但实现需要含 2 列的图像列表文件。只需将第 2 列设为随机值或 0 即可)
+		*2.并且注意到校准图片的.txt 文档中，实现量化时需要含两列的列表文件，这与tensorflow 的校准文件的txt文档不一样。(对于量化校准，不含标签的校准数据即可足够。但实现需要含2列的图像列表文件。只需将第2列设为随机值或 0 即可)
 		*3.注意到校准图片的路径应该是docker 环境下的路径，即路径应该是 workspace 是vitis-ai 为工作空间的， 此时的vitis-ai 可以理解成主机上的home;		
 		vai_q_caffe quantize -model ../dpu1.3.2_caffe_model/v4_leacky_quanti.prototxt  -keep_fixed_neuron -calib_iter 3 -weights ../dpu1.3.2_caffe_model/v4_leacky.caffemodel -sigmoided_layers layer133-conv,layer144-conv,layer155-conv -output_dir ../dpu1.3.2_caffe_model/ -method 1 
 
@@ -100,7 +101,7 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 Part3: 在边缘端(ultra_96_v2),  使用pynq-dpu1.2 分别测试剪枝前后yolov4网络的推理速度， 使用pynq-dpu1.3 分别测试剪枝前后yolov4网络消耗的能量。
 ------------
        3.1  在SD(32G)卡上烧写PYNQ2.6的镜像， 镜像文件（https://github.com/Xilinx/PYNQ/releases or http://www.pynq.io/board.html) 
-       3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入
+       3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入到板子中对应的路径下。
 
 
 Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/ ，展示了当image input size 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
