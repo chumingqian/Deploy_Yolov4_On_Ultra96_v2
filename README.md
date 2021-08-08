@@ -1,19 +1,20 @@
 
-##  [English Version  README.MD] (https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/blob/main/README_eng.md)
-
 <div align="center">
 📖 Github
 &emsp;&emsp; | &emsp;&emsp;
-<a href="https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/blob/main/README_eng.md">📚 Docsify</a>
+<a href="https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/">📚 Docsify</a>
 </div> 
 <br>
 
 <div align="center">
-<a href="https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/">简体中文</a>
+简体中文
 &emsp;&emsp; | &emsp;&emsp;
-English
+<a href="https://github.com/chumingqian/Deploy_Yolov4_On_Ultra96_v2/blob/main/README_eng.md">English</a>
 </div> 
 <br>
+
+
+
 
 ###   本仓库主要包含以下部分的内容：
 ###     
