@@ -46,8 +46,8 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 
    2.2 从 docker上拉取预编译好的vitis ai 的安装环境,(若在本地安装请准备好32G 以上的内存用于安装时的编译)。
    
-             启动docker 环境中的vitis ai ：	    
-	          ./docker_run.sh xilinx/vitis-ai-cpu:latest
+                启动docker 环境中的vitis ai ：	    
+	       ./docker_run.sh xilinx/vitis-ai-cpu:latest
 		  
 	     注意到默认启动最新版本的vitis ai, 如需启动对应的版本，在后面指定对应的序列。
 		  	         Vitis AI v1.4	./docker_run.sh xilinx/vitis-ai-cpu:1.4.916
@@ -143,8 +143,8 @@ Part3: 在边缘端(ultra_96_v2), 使用pynq-dpu1.2 分别测试剪枝前后yolo
        3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入到板子中对应的路径下。
        3.3  编写用于运行网络推理的notebook.ipynb, 以下为调用DPU 运行网络推理的主体步骤，(其中测试功耗的evaluation.ipynb 在test_energy文件中)。
                       
-			* 加载模型(vitis-ai生成的.xmodel文件)：
-			  	overlay.load_model(“dpu_model.xmodel”  or "dup_model.elf")
+			* 加载模型(vitis-ai生成的.xmodel or dup_model.elf)：
+			  	overlay.load_model(“dpu_model.xmodel”  )
 			* 定义dpu对象
 			   	dpu = overlay.runner
 			* 创建输入和输出Buffer
