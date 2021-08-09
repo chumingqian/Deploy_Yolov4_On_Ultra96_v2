@@ -19,7 +19,7 @@
 * Part2: 使用vitis -ai 工具对网络进行量化和编译. 
 * Part3: 将网络部署到边缘端(ultra_96_v2)上,编写notebook.ipynb 文件，调用pynq-dpu 推理运行网络.  
     
- Note:在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考(https://github.com/chumingqian/Model_Compression_For_YOLOV4). 这里提供已经训练好的权重文件：https://pan.baidu.com/s/1lL1tPSOKJc4V4eF_SqVoHw 提取码: rvrg，网络文件位于07-yolov4-tutorial/dk_model/ . 注意到如果要对网络进行剪枝，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
+ Note:在部署YOLOV4 网络之前，需要对YOLOV4网络进行剪枝的同学，可以参考(https://github.com/chumingqian/Model_Compression_For_YOLOV4). 这里提供已经训练好的权重文件：https://pan.baidu.com/s/1lL1tPSOKJc4V4eF_SqVoHw 提取码: rvrg，网络文件位于07-yolov4-tutorial/dk_model/ . 注意到，需要先对yolov4.cfg 修改成dpu支持的网络，再对修改后的网络进行剪枝。 
 
   
 
@@ -41,12 +41,11 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
    2.1 从GitHub上拉取vitis ai的仓库文件：
    
 	          git clone --recurse-submodules https://github.com/Xilinx/Vitis-AI  
+		  
                   cd Vitis-AI
 
    2.2 从 docker上拉取预编译好的vitis ai 的安装环境,(若在本地安装请准备好32G 以上的内存用于安装时的编译)。
    
-	          ./docker pull xilinx/vitis-ai-cpu:latest  
-		  
              启动docker 环境中的vitis ai ：	    
 	          ./docker_run.sh xilinx/vitis-ai-cpu:latest
 		  
@@ -58,7 +57,11 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 				 Vitis AI v1.2	./docker_run.sh xilinx/vitis-ai-cpu:1.2.82
              
          
-   2.3 在启动vitis ai后， 可以看到vitis ai 当前支持的深度学习框架有Pytorch、Tensorflow、Tensorflow 2 和 Caffe， 由于笔者实现的是Darknet 版本的yolov4, 网络文件为.cfg格式， 故先要对网络文件，以及权重文件的格式进行转换， 此处介绍两种转换方式由darknet 分别转换成Tensorflow 和 caffe, 之后对caffe 和 Tensorflow 模型进行量化和编译。 对网络模型的量化和编译，具体可参考 vitis ai 中的技术文档(https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html)，其中有中文版c_ug1414-vitis-ai.pdf.     
+   2.3 在启动vitis ai后， 可以看到vitis ai 当前支持的深度学习框架有Pytorch、Tensorflow、Tensorflow 2 和 Caffe.
+   
+    由于笔者实现的是Darknet 版本的yolov4, 网络文件为.cfg格式， 故先要对网络文件以及权重文件的格式进行转换，此处介绍两种转换方式由darknet 分别转换成Tensorflow 和 caffe. 之后对caffe 和 Tensorflow 模型进行量化和编译。
+    
+    对网络模型的量化和编译，具体可参考 vitis ai 中的技术文(https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html)，其中有中文版c_ug1414-vitis-ai.pdf.     
         		
 
    2.4 Darknet Convert to Tensorflow(conda activate Tensorflow) (for pynq-dpu1.2 ,generate the dpu_model.elf )
@@ -70,7 +73,7 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 	        输入节点和输出节点名称因模型而异，可使用 vai_q_tensorflow 量化器来检查和估算这些节点。请参阅以下代码片段示例：
 		$ vai_q_tensorflow inspect --input_frozen_graph=../tf_model/v4_tf_model.pb
 
-		种获取图的输入和输出名称的方法是将图可视化。 TensorBoard 和 Netron 均可执行此操作。请参阅以下示例， 其中使用的是 Netron：
+               或者通过图可视化获取图的输入和输出名称。 TensorBoard 和 Netron 均可执行此操作。请参阅以下示例， 其中使用的是 Netron：
 		$ pip install netron
 		$  netron ../tf_model/v4_tf_model.pb
 
@@ -88,7 +91,40 @@ Part2: 在主机端(ubuntu18.04)上使用 Xilinx 的vitis -ai 1.3.2 工具完成
 		python /opt/vitis_ai/conda/envs/vitis-ai-caffe/bin/convert.py ../dk_model/yolov4-voc-leaky.cfg ../dk_model/leakcy-v4.weights  ../dpu1.3.2_caffe_model/v4_leacky.prototxt ../dpu1.3.2_caffe_model/v4_leacky.caffemodel
 
 		STEP2:  MDOEL  QUANTI
-		*1.在量化之前，对原始的.prototxt网络拷贝一个副本，在副本中加入校准图片的路径， 使用该副本网络进行量化；
+		*1.在量化之前，对原始的.prototxt网络拷贝一个副本，在副本中加入校准图片的路径并作如下修改，使用该副本网络进行量化；
+		  name: "Darkent2Caffe"
+		  #input: "data"
+		  #input_dim: 1
+		  #input_dim: 3
+		  #input_dim: 416
+		  #input_dim: 416
+
+		  ####Change input data layer to VOC validation images #####
+		  layer {
+		    name: "data"
+		    type: "ImageData"
+		    top: "data"
+		    top: "label"
+		    include {
+		      phase: TRAIN
+		    }
+		    transform_param {
+		      mirror: false
+		      yolo_height:416  #change height according to Darknet model
+		      yolo_width:416   #change width according to Darknet model
+		    }
+		    image_data_param {
+		      source: "voc/calib.txt"  #list of calibration imaages     
+		      root_folder: "images/" #path to calibartion images
+
+		      batch_size: 1
+		      shuffle: false
+		    }
+		  }
+		  #####No changes to the below layers##### 
+		~~~
+
+		
 		*2.并且注意到校准图片的.txt 文档中，实现量化时需要含两列的列表文件，这与tensorflow 的校准文件的txt文档不一样。(对于量化校准，不含标签的校准数据即可足够。但实现需要含2列的图像列表文件。只需将第2列设为随机值或 0 即可)
 		*3.注意到校准图片的路径应该是docker 环境下的路径，即路径应该是 workspace 是vitis-ai 为工作空间的， 此时的vitis-ai 可以理解成主机上的home;		
 		vai_q_caffe quantize -model ../dpu1.3.2_caffe_model/v4_leacky_quanti.prototxt  -keep_fixed_neuron -calib_iter 3 -weights ../dpu1.3.2_caffe_model/v4_leacky.caffemodel -sigmoided_layers layer133-conv,layer144-conv,layer155-conv -output_dir ../dpu1.3.2_caffe_model/ -method 1 
@@ -139,7 +175,7 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
 #####    实验结果如图1所示。
 
 <div align="center">
-<img src="./images/fig1.png" width = "700" height = "360" />
+<img src="./images_in_readme/fig1.png" width = "700" height = "360" />
 </div>	
 
 
