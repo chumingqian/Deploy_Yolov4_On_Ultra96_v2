@@ -45,19 +45,19 @@ Part2: On Host machine(ubuntu18.04) use the Vitis -ai 1.3.2(Xilinx) tool to quan
    
 	          git clone --recurse-submodules https://github.com/Xilinx/Vitis-AI  
             
-            cd Vitis-AI
+                  cd Vitis-AI
 
    2.2 Run the CPU image from the Docker Hub: (Pelese prepare the above 32G Memory, if you want build the CPU image locally.)
    
 	          ./docker pull xilinx/vitis-ai-cpu:latest  
 		  
-	     Notice that default startup version is the latest, you can add the number if you want start the specified version.
+	          Notice that default startup version is the latest, you can add the number if you want start the specified version.
        
 		  	         Vitis AI v1.4	./docker_run.sh xilinx/vitis-ai-cpu:1.4.916
-				         Vitis AI v1.3	./docker_run.sh xilinx/vitis-ai-cpu:1.3.411
-				         Vitis AI v1.3.1
-				         Vitis AI v1.3.2
-				         Vitis AI v1.2	./docker_run.sh xilinx/vitis-ai-cpu:1.2.82
+				 Vitis AI v1.3	./docker_run.sh xilinx/vitis-ai-cpu:1.3.411
+				 Vitis AI v1.3.1
+				 Vitis AI v1.3.2
+				 Vitis AI v1.2	./docker_run.sh xilinx/vitis-ai-cpu:1.2.82
              
          
    2.3  After we startup the vitis ai, we can see that currently  it support the following deep learning frames:Pytorch、Tensorflow、Tensorflow 2 and Caffe .
@@ -125,69 +125,66 @@ Part2: On Host machine(ubuntu18.04) use the Vitis -ai 1.3.2(Xilinx) tool to quan
               }
             }
             #####No changes to the below layers##### 
-    *2. Notice that the calibration images in file.txt, the .txt file needs to be a  two column format to realize the quantization.
-    
-		*1.在量化之前, 对原始的.prototxt网络拷贝一个副本，在副本中加入校准图片的路径， 使用该副本网络进行量化；
-		*2.并且注意到校准图片的.txt 文档中，实现量化时需要含两列的列表文件，这与tensorflow 的校准文件的txt文档不一样。(对于量化校准，不含标签的校准数据即可足够。但实现需要含2列的图像列表文件。只需将第2列设为随机值或 0 即可)
-		*3.注意到校准图片的路径应该是docker 环境下的路径，即路径应该是 workspace 是vitis-ai 为工作空间的， 此时的vitis-ai 可以理解成主机上的home;		
+    		*2. Notice that the calibration images in file.txt, the .txt file needs to be a two column format to realize the quantization.(For the quantize calibration, the images without labels are enough, but to realize the quantization we need a two column format .txt file, one column is the image_id, the other column just set as the zero)
+		
+    		*3. Notice that the path of the calibration images should under the Doker environment, meanwhile the  workspace can be regard as computer  and the vitis ai  regard as  a home:	
+		
 		vai_q_caffe quantize -model ../dpu1.3.2_caffe_model/v4_leacky_quanti.prototxt  -keep_fixed_neuron -calib_iter 3 -weights ../dpu1.3.2_caffe_model/v4_leacky.caffemodel -sigmoided_layers layer133-conv,layer144-conv,layer155-conv -output_dir ../dpu1.3.2_caffe_model/ -method 1 
 
 		STEP3:  MODEL  COMPILE 
 		vai_c_caffe --prototxt ../dpu1.3.2_caffe_model/original_model_quanti/deploy.prototxt --caffemodel ../dpu1.3.2_caffe_model/original_model_quanti/deploy.caffemodel --arch ./u96pynq_v2.json --output_dir ../dpu1.3.2_caffe_model/ --net_name dpu1-3-2_v4_voc --options "{'mode':'normal','save_kernel':''}";
     
-		 注意到在ultra_96_v2上,pynq-dpu1.3 中，使用编译生成好的.xmodel 文件运行网络推理时， 如果出现 footprint  not match 的现象，可将u96pynq_v2.json 文件替换成 u96pynq.json，具体可参考：https://forums.xilinx.com/t5/AI-and-Vitis-AI/vitis-ai-1-3-with-ultra96/td-p/1189251 。
+		 notice that :  After generate the  .xmodle, when we inference the network use the pynq-dpu 1.3 and call the dpu.xmodel on  ultra_96_v2, if it appears the  error "the target footprint xxx  not match XXX  "，  we can use the u96pynq_v2.json instead of u96pynq.json, reference is https://forums.xilinx.com/t5/AI-and-Vitis-AI/vitis-ai-1-3-with-ultra96/td-p/1189251 .
+		 
+		
 
 
 
-
-
-Part3: On the edge device (ultra_96_v2),  
-在边缘端(ultra_96_v2), 使用pynq-dpu1.2 分别测试剪枝前后yolov4网络的推理速度，使用pynq-dpu1.3 分别测试剪枝前后yolov4网络消耗的能量。
+Part3: On the edge device (ultra_96_v2), using the pynq-dpu1.2 to test the inference speed both of the   unpruned network and  pruned network,  and using the pynq-dpu1.3 to test the energy consumption both of the unpruned yolov4 and pruned yolov4 network.
 ------------
-       3.1  在SD(32G)卡上烧写PYNQ2.6的镜像， 镜像文件（https://github.com/Xilinx/PYNQ/releases or http://www.pynq.io/board.html) 
-       3.2  在ultra_96_v2 上，载入SD卡， 启动板卡。 可以使用MobaXterm连接串口通信， 从本地浏览器中输入192.168.3.1； 在板卡上安装DPU-PYNQ https://github.com/Xilinx/DPU-PYNQ,  如果网速较慢，可以先下载到PC端上， 再从PC机中拖入到板子中对应的路径下。
-       3.3  编写用于运行网络推理的notebook.ipynb, 以下为调用DPU 运行网络推理的主体步骤，(其中测试功耗的evaluation.ipynb 在test_energy文件中)。
-                      
-			* 加载模型(vitis-ai生成的.xmodel文件)：
-			  	overlay.load_model(“dpu_model.xmodel”  or "dup_model.elf")
-			* 定义dpu对象
+       3.1 Prepare a SD card (32G)to flash the image of PYNQ2.6, image file can be obtain at (https://github.com/Xilinx/PYNQ/releases or http://www.pynq.io/board.html) 
+       3.2  Load the SD card, startup the ultra_96_v2 board, we can use the MobaXterm to connect the pc, input the 192.168.3.1 on the local browser,  install DPU-PYNQ (https://github.com/Xilinx/DPU-PYNQ), if the download speed  is too slow, we can downlad the file to local PC, then  copy to the board.
+       3.3  Programming the  notebook.ipynb for  inference the network, the following is main step to inference  a neuro network, (the evaluation.ipynb to test the energy power is under ./test_energy file)
+
+			* load the model (generate by the vitis ai,“dpu_model.xmodel”  or "dup_model.elf" )
+			  	overlay.load_model(“dpu_model.xmodel” )
+			* define the dpu  object
 			   	dpu = overlay.runner
-			* 创建输入和输出Buffer
+			* create the input and output buffer   
 				output_data = [np.empty(shapeOut, dtype=np.float32, order="C")]
 				input_data = [np.empty(shapeIn, dtype=np.float32, order="C")]
-			* 进行预测
+			* to make a prediction:
 				job_id = dpu.execute_async(input_data, output_data)
 				dpu.wait(job_id)
-			* 预测的结果存储在output_data中
-
+			* save the prediction result into the output_data file.
 
 
 
 Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
 ------------
-展示了当 image input size: 416 *416，从：1.网络的体积，2.网络的推理速度 3.网络消耗的能量，这三个方面来对比剪枝前后的网络的性能:
+When the input size of the images are: 416 *416, From the following repective to compare the unpruned yolov4 and pruned yolov4 network.1. the size of the network. 2. the inference speed of the network. 3. the energy comsumption of the network.
  
-      1  对比剪枝前后网络模型的体积大小.     
-      2  在ultra96_v2, pynq-dpu1.2,的环境下载入生成的.elf 文件，运行对应的.ipynb文件.
-         2.1 测试剪枝网络模型的推理速度 250 ms.
-         2.2 测试未剪枝网络模型的推理速度 330 ms. 
+      1. the size of the unpruned yolov4 and pruned yolov4 network.
+           
+      2  On ultra96_v2,  for the pynq-dpu1.2 load the modle.elf,  run the notebook.ipynb.
+         2.1 pruned yolov4: the speed of inferencing single image was  250 ms.
+         2.2 unpruned yolov4: the speed of inferencing single image was 330 ms. 
          
-      3  在ultra96_v2, pynq-dpu1.3,的环境下载入生成的.xmodel 文件，运行对应的.ipynb文件.
-         3.1 测试剪枝网络模型推理10 张images 所消耗的功耗，约为39J.  随后测试推理500 images，所消耗的功耗，约为1872J .
-         3.2 测试未剪枝网络模型推理500 images，所消耗的功耗，约为2347J .
+      3  On ultra96_v2,  for the pynq-dpu1.3 load the modle.xmodle,  run the eval.ipynb.
+         3.1 pruned yolov4 , consume 39 J when inference 10 images, consume 1872J when inference 500 images. 
+         3.2 unpruned yolov4 , consume 2347 J when inference 500 images.
     
                            
-#####    实验结果如图1所示。
+#####   The result  as shown in the figure.
 
 <div align="center">
-<img src="./images/fig1.png" width = "700" height = "360" />
+<img src="./images_in_readme/fig1.png" width = "700" height = "360" />
 </div>	
 
 
-致谢:  感谢 XILINX & NICU 共同举办的暑期学校，这是个值得纪念的Summer School, 我们度过了南京疫情和上海“烟花”台风，最终抵达 XILINX_2021 SUMMER SCHOOL的彼岸. 
+Acknowledgements:  Thank you for the Summer School co-organized by XILINX & NICU. This Summer School is memorable. We had experienced the Nanjing epidemic and Shanghai typhoon-' fireworks ', Finally we arrived on the land of XILINX _ 2021 SUMMER SCHOOL. 
 ======  
-
-
+  
 <div align="center">
 <img src=https://img-blog.csdnimg.cn/20200822014538211.png />
 </div>
