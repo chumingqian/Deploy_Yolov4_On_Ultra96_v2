@@ -182,7 +182,12 @@ When the input size of the images are: 416 *416, From the following repective to
 </div>	
 
 
-Acknowledgements:  Thank you for the Summer School co-organized by XILINX & NICU. This Summer School is memorable. We had experienced the Nanjing epidemic and Shanghai typhoon-' fireworks ', Finally we arrived on the land of XILINX _ 2021 SUMMER SCHOOL. 
+Acknowledgements: 
+====
+Thank you for the Summer School co-organized by XILINX & NICU.
+This Summer School is memorable. We had experienced the Nanjing epidemic and Shanghai typhoon-'Fireworks'.
+Finally we arrived on the land of XILINX _ 2021 SUMMER SCHOOL. 
+
 ======  
   
 <div align="center">
