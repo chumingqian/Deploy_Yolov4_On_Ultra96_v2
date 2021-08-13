@@ -23,7 +23,7 @@ This repository has contain the following part：
 * Part2: Use Vitis-ai tool to quantify and compile the yolov4 network. 
 * Part3: Deploy the yolov4 to the edge device(ultra_96_v2)上, write the notebook.ipynb to call the pynq-dpu and inference the network. 
     
- Note: Before we deploy the YOLOV4, some friends may want pruning the YOLOV4 network, there is a reference (https://github.com/chumingqian/Model_Compression_For_YOLOV4), we use this method pruning the network and deployed the pruned yolov4 network successfully. Here is weights both for original network and pruned network：https://pan.baidu.com/s/1lL1tPSOKJc4V4eF_SqVoHw ,code: rvrg, And the yolov4.cfg which suit the dpu are locate at 07-yolov4-tutorial/dk_model/ .  Notice that, we need modify the yolov4.cfg firstly so that network can call the dpu module, then we can prune the modified yolov4.cfg.
+ Note: Before we deploy the YOLOV4, some friends may want pruning the YOLOV4 network, in this repository we use this [channel pruning](https://github.com/chumingqian/Model_Compression_For_YOLOV4) method to prune the network and deployed the pruned yolov4 network successfully. Here is weights both for original network and pruned network：https://pan.baidu.com/s/1lL1tPSOKJc4V4eF_SqVoHw , Extract code: rvrg, And the yolov4.cfg which suit the dpu are locate at 07-yolov4-tutorial/dk_model/ .  Notice that, we need modify the yolov4.cfg firstly so that network can call the dpu module, then we can prune the modified yolov4.cfg.
   
 
 Part1:  Modify yolov4.cfg network.
