@@ -23,7 +23,12 @@ This repository has contain the following part：
 * Part2: Use Vitis-ai tool to quantify and compile the yolov4 network. 
 * Part3: Deploy the yolov4 to the edge device(ultra_96_v2)上, write the notebook.ipynb to call the pynq-dpu and inference the network. 
     
- Note: Before we deploy the YOLOV4, some friends may want pruning the YOLOV4 network, in this repository we use this [channel pruning](https://github.com/chumingqian/Model_Compression_For_YOLOV4) method to prune the network and deployed the pruned yolov4 network successfully. Here is weights both for original network and pruned network：https://pan.baidu.com/s/1lL1tPSOKJc4V4eF_SqVoHw , Extract code: rvrg, And the yolov4.cfg which suit the dpu are locate at 07-yolov4-tutorial/dk_model/ .  Notice that, we need modify the yolov4.cfg firstly so that network can call the dpu module, then we can prune the modified yolov4.cfg.
+ Note: Before we deploy the YOLOV4, some friends may want pruning the YOLOV4 network, in this repository we use this [channel pruning](https://github.com/chumingqian/Model_Compression_For_YOLOV4) method to prune the network and deployed the pruned yolov4 network successfully.
+ We train the pruned both on the  VOC dataset (contains 20 classes) &&  COCO dataset (contains 80 classes).  Here are the weights both for original network and pruned network：https://pan.baidu.com/s/1lL1tPSOKJc4V4eF_SqVoHw , Extract code: rvrg.
+ 
+ And the yolov4-voc-leaky.cfg which suit the dpu are locate at 07-yolov4-tutorial/dk_model/ . 
+ 
+ Notice that, we need modify the yolov4.cfg firstly so that network can call the dpu module, then we can prune the modified yolov4.cfg.
   
 
 Part1:  Modify yolov4.cfg network.
@@ -39,7 +44,7 @@ Part1:  Modify yolov4.cfg network.
 Part2: On Host machine(ubuntu18.04) use the Vitis -ai 1.3.2(Xilinx) tool to quantize and compile the network.
 ------------
 
-   2.0 Install Docker on Ubuntu18.04, if Docker not installed on your machine (https://docs.docker.com/engine/install/ubuntu/ ). Follow the Post installation steps  for Linux ( https://docs.docker.com/engine/install/linux-postinstall/ ) to ensure that your Linux user is in the group Docker. Or you can  reference the  https://www.xilinx.com/html_docs/vitis_ai/1_3/installation.html to install the vitis ai。
+   2.0 Install Docker on Ubuntu18.04, if Docker not installed on your machine (https://docs.docker.com/engine/install/ubuntu/ ). Follow the Post installation steps  for Linux ( https://docs.docker.com/engine/install/linux-postinstall/ ) to ensure that your Linux user is in the group Docker. Or you can  reference the  https://www.xilinx.com/html_docs/vitis_ai/1_3/installation.html to install the vitis ai.
    
    2.1 Clone the Vitis ai repository to obtain the examples, reference code, and scripts.
    
@@ -61,8 +66,11 @@ Part2: On Host machine(ubuntu18.04) use the Vitis -ai 1.3.2(Xilinx) tool to quan
              
          
    2.3  After we startup the vitis ai, we can see that currently  it support the following deep learning frames:Pytorch、Tensorflow、Tensorflow 2 and Caffe .
-       In this repository the yolov4 network was trained by the DarkNet, the network file of the modle  is .cfg format, So we both convert the network file's format and weights's format. Here provide the two ways which are convert the Darknet to  Tensorflow and Caffe.
-       Then we quantize and compile the converted model, here  is the official  user  guide (https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html), ug1414-vitis-ai.pdf.     
+       
+   In this repository the yolov4 network was trained by the DarkNet, the network file of the modle  is .cfg format.
+   So we both convert the network file's format and weights's format. Here provide the two ways which are convert the Darknet to  Tensorflow and Caffe.
+       
+   Then we quantize and compile the converted model, here  is the official  user  guide (https://china.xilinx.com/products/design-tools/vitis/vitis-ai.html), ug1414-vitis-ai.pdf.     
         		
 
    2.4 Darknet Convert to Tensorflow(conda activate Tensorflow) (For pynq-dpu1.2, generate the dpu_model.elf )
@@ -185,7 +193,9 @@ When the input size of the images are: 416 *416, From the following repective to
 Acknowledgements: 
 ====
 Thank you for the Summer School co-organized by XILINX & NICU.
+
 This Summer School is memorable. We had experienced the Nanjing epidemic and Shanghai typhoon-'Fireworks'.
+
 Finally we arrived on the land of XILINX _ 2021 SUMMER SCHOOL. 
 
 ======  
