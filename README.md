@@ -207,12 +207,13 @@ Every  epoch inculde 400 images, so 50 * 400  + 288 =  20288 is correct.
 It is often occurs running  out of  memory  and cause the connection  refused.
 
 Here is the solution we use,  extanding the  swap space  temporary.
--check all  process "top"
--Check the current usage  "free -h "  and show the usage of the swap "swapon --show".
--sudo  su to get the  super privillage.
+
+- check all  process "top"
+- Check the current usage  "free -h "  and show the usage of the swap "swapon --show".
+- sudo  su to get the  super privillage.
 
 -make a  folder to storage the swapfile. 
-  mkdir "root/swap/swapfile"  cd to this path,  if don't have this path make it.
+mkdir "root/swap/swapfile"  cd to this path,  if don't have this path make it.
 
 - "sudo dd if=/dev/zero of=swap2G  bs=1G  count=2 " ;  make a  swap file
 
@@ -222,8 +223,8 @@ Here is the solution we use,  extanding the  swap space  temporary.
 
 5.3 We make it swap space as temporary, because we  know , the  swap space  use regard  as a "fake memory of the RAM",  when use this hardware  space  with  a  high process speed, it may reduce the hardware's  life.
 
--If you want make this swap space as a permanent,
--sudo vim /etc/fstab;  add "root/swap/swapfile/swap2G  swap swap defaults 0 0 "  to this  file.
+- If you want make this swap space as a permanent,
+- sudo vim /etc/fstab;  add "root/swap/swapfile/swap2G  swap swap defaults 0 0 "  to this  file.
 
 - "swapon  --show " check the swap space.
   
