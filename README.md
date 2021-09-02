@@ -174,7 +174,27 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
          3.1 测试剪枝网络模型推理10 张images 所消耗的功耗，约为39J.  随后测试推理500 images，所消耗的功耗，约为1872J .
          3.2 测试未剪枝网络模型推理500 images，所消耗的功耗，约为2347J .
     
-                           
+    
+Part5: Evaluate  test-dev2017  about 21k  images on  the  Ultra_96_v2 .
+------------
+
+We  may use  about 3days to get the  following  information:  
+
+
+               top - 10:47:35 up 3 days,
+               ....
+
+		process batch: 286
+		process batch: 287
+		save current epoch result, and this is the  epoch : 51
+		The whole number of  images: 20288
+		Total time: 223978.88142991066 seconds
+		Total energy: 867699.8735406108 J
+		root@pynq:/home/xilinx/jupyter_notebooks/lpcv_2021#
+		
+Every  epoch inculde 400 images, so 50 * 400  + 288 =  20288  is correct. 
+
+
 #####    实验结果如图1所示。
 
 <div align="center">
