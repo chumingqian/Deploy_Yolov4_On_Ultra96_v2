@@ -202,6 +202,12 @@ We  may use  about 3days to get the  following  information:
 		
 Every  epoch inculde 400 images, so 50 * 400  + 288 =  20288 is correct. 
 
+The reason we divide the 20288 images  into 51 epochs to test  that  the ultra96_v2's  memory  is 2 G.
+It is often occurs running  out of  memory  and cause the connection  refused.
+
+Here is the  solution we use.  extanding the  swap space  temporary.
+
+
 
 #####   The result  as shown in the figure.
 
