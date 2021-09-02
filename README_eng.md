@@ -182,7 +182,27 @@ When the input size of the images are: 416 *416, From the following repective to
          3.1 pruned yolov4 , consume 39 J when inference 10 images, consume 1872J when inference 500 images. 
          3.2 unpruned yolov4 , consume 2347 J when inference 500 images.
     
-                           
+
+Part5: Evaluate  test-dev2017  about 21k  images on  the  Ultra_96_v2 .
+------------
+
+We  may use  about 3days to get the  following  information:  
+
+
+               top - 10:47:35 up 3 days,
+               ....
+
+		process batch: 286
+		process batch: 287
+		save current epoch result, and this is the  epoch : 51
+		The whole number of  images: 20288
+		Total time: 223978.88142991066 seconds
+		Total energy: 867699.8735406108 J
+		root@pynq:/home/xilinx/jupyter_notebooks/lpcv_2021#
+		
+Every  epoch inculde 400 images, so 50 * 400  + 288 =  20288 is correct. 
+
+
 #####   The result  as shown in the figure.
 
 <div align="center">
