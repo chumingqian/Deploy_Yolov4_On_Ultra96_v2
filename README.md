@@ -175,10 +175,19 @@ Part4: demo.video https://www.bilibili.com/video/BV1AU4y1n7w6/.
          3.2 测试未剪枝网络模型推理500 images，所消耗的功耗，约为2347J .
     
     
+
+
+#####    实验结果如图1所示。
+
+<div align="center">
+<img src="./images_in_readme/fig1.png" width = "700" height = "360" />
+</div>	
+
+
 Part5: Evaluate  test-dev2017  about 21k  images on  the  Ultra_96_v2 .
 ------------
 
-We  may use  about 3days to get the  following  information:  
+5.1 We  may use  about 2.5 days( =  223978 s /60s / 60 min / 24 Hour ) to get the  following  information:  
 
 
                top - 10:47:35 up 3 days,
@@ -192,14 +201,32 @@ We  may use  about 3days to get the  following  information:
 		Total energy: 867699.8735406108 J
 		root@pynq:/home/xilinx/jupyter_notebooks/lpcv_2021#
 		
-Every  epoch inculde 400 images, so 50 * 400  + 288 =  20288  is correct. 
+Every  epoch inculde 400 images, so 50 * 400  + 288 =  20288 is correct. 
 
+5.2 The reason we divide the 20288 images  into 51 epochs to test is that the ultra96_v2 board's  memory  is 2 G.
+It is often occurs running  out of  memory  and cause the connection  refused.
 
-#####    实验结果如图1所示。
+Here is the solution we use,  extanding the  swap space  temporary.
+-check all  process "top"
+-Check the current usage  "free -h "  and show the usage of the swap "swapon --show".
+-sudo  su to get the  super privillage.
 
-<div align="center">
-<img src="./images_in_readme/fig1.png" width = "700" height = "360" />
-</div>	
+-make a  folder to storage the swapfile. 
+  mkdir "root/swap/swapfile"  cd to this path,  if don't have this path make it.
+
+- "sudo dd if=/dev/zero of=swap2G  bs=1G  count=2 " ;  make a  swap file
+
+- "mkswap swap2G"; Turn  the  swap file  into  a  swap  space .
+
+- "swapon  swap2G ";   Activate  this  swap  space.
+
+5.3 We make it swap space as temporary, because we  know , the  swap space  use regard  as a "fake memory of the RAM",  when use this hardware  space  with  a  high process speed, it may reduce the hardware's  life.
+
+-If you want make this swap space as a permanent,
+-sudo vim /etc/fstab;  add "root/swap/swapfile/swap2G  swap swap defaults 0 0 "  to this  file.
+
+- "swapon  --show " check the swap space.
+  
 
 
 致谢:  感谢 XILINX & NICU 共同举办的暑期学校，这是个值得纪念的Summer School, 我们度过了南京疫情和上海“烟花”台风，最终抵达 XILINX_2021 SUMMER SCHOOL的彼岸. 
