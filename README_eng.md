@@ -214,6 +214,7 @@ It is often occurs running  out of  memory  and cause the connection  refused.
 
 Here is the solution we use,  extanding the  swap space  temporary.
 - check all  process "top"
+- use "sync;  echo 3 >  /proc/sys/vm/drop_caches " to release  some  cache memory. 
 - Check the current usage  "free -h "  and show the usage of the swap "swapon --show".
 - sudo  su to get the  super privillage.
 
@@ -222,9 +223,9 @@ mkdir "root/swap/swapfile"  cd to this path,  if don't have this path make it.
 
 - "sudo dd if=/dev/zero of=swap2G  bs=1G  count=2 " ;  make a  swap file
 
-- "mkswap swap2G"; Turn  the  swap file  into  a  swap  space .
+- "sudo mkswap -f swap2G"; Turn  the  swap file  into  a  swap  space .
 
-- "swapon  swap2G ";   Activate  this  swap  space.
+- "sudo swapon  swap2G ";   Activate  this  swap  space.
 
 5.3 We make it swap space as temporary, because we  know , the  swap space  use regard  as a "fake memory of the RAM",  when use this hardware  space  with  a  high process speed, it may reduce the hardware's  life.
 
