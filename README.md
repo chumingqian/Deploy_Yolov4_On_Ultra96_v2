@@ -235,6 +235,6 @@ mkdir "root/swap/swapfile"  cd to this path,  if don't have this path make it.
 
 
 <div align="center">
-<img src=https://img-blog.csdnimg.cn/20200822014538211.png />
+<img src="./images_in_readme/fig2.png" width = "700" height = "360" />
 </div>
 
